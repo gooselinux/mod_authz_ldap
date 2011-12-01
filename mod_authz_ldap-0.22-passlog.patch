@@ -1,0 +1,11 @@
+--- mod_authz_ldap-0.22/module/auth.c.passlog
++++ mod_authz_ldap-0.22/module/auth.c
+@@ -172,7 +172,7 @@
+ 		if (sec->loglevel >= APLOG_ERR)
+ 		ap_log_rerror(APLOG_MARK, APLOG_NOERRNO|APLOG_ERR,
+ 			APLOG_STATUS r,
+-			"[%d] bind as %s/%s failed: %d", (int)getpid(), dn, pw,
++			"[%d] bind as %s failed: %d", (int)getpid(), dn,
+ 			res);
+ 		ap_note_basic_auth_failure(r);
+ 		return HTTP_UNAUTHORIZED;

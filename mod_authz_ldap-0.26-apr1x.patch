@@ -1,0 +1,31 @@
+
+--- mod_authz_ldap-0.26/module/mod_authz_ldap.h.apr1x	2005-12-05 14:12:49.000000000 +0000
++++ mod_authz_ldap-0.26/module/mod_authz_ldap.h	2005-12-05 14:18:47.000000000 +0000
+@@ -15,11 +15,11 @@
+ #include "http_request.h"
+ #include "ap_config.h"
+ #include "ap_compat.h"
+-#ifdef AP_SERVER_MAJORVERSION
+-#include "apr_compat.h"
+-#endif /* AP_SERVER_MAJORVERSION */
+ #include "http_log.h"
+ #include "../authz.h"
++
++#define LDAP_DEPRECATED 1
++
+ #ifdef HAVE_LBER_H
+ #include <lber.h>
+ #endif
+@@ -52,6 +52,12 @@
+ #define ldap_memfree	free
+ #endif
+ 
++#define ap_pstrdup apr_pstrdup
++#define ap_table_set apr_table_set
++#define ap_table_get apr_table_get
++#define ap_snprintf apr_snprintf
++#define ap_palloc apr_palloc
++
+ module	MODULE_VAR_EXPORT	authz_ldap_module;
+ 
+ #define	AUTHZ_AUTH	0

@@ -1,0 +1,32 @@
+--- mod_authz_ldap-0.26/module/auth.c.subreq
++++ mod_authz_ldap-0.26/module/auth.c
+@@ -229,6 +229,14 @@
+ 	AUTHZ_DEBUG3("[%d] authz_ldap_auth called for uri %s", (int)getpid(),
+ 		r->uri);
+ 
++	/* find out whether we have to do anything at all		*/
++	if (AUTHMETHOD_NONE == sec->method) {
++		AUTHZ_DEBUG3("[%d] authz_ldap not activeated in %x (see "
++			"AuthzLDAPMethod)", (int)getpid(), (unsigned int)sec);
++		rc = DECLINED;
++		goto auth_end;
++	}
++
+ 	/* if this is a subrequest the primary of which has been	*/
+ 	/* authenticated successfully, we simply return after copying	*/
+ 	/* the notes							*/
+@@ -246,14 +254,6 @@
+ 	AUTHZ_DEBUG2("[%d] processing main request", (int)getpid());
+ 	initial_authenticated = 0;
+ 
+-	/* find out whether we have to do anything at all		*/
+-	if (AUTHMETHOD_NONE == sec->method) {
+-		AUTHZ_DEBUG3("[%d] authz_ldap not activeated in %x (see "
+-			"AuthzLDAPMethod)", (int)getpid(), (unsigned int)sec);
+-		rc = DECLINED;
+-		goto auth_end;
+-	}
+-
+ 	/* find the default value to return (need sec for this to work)	*/
+ 	rc = AUTHZ_DECLINED;
+ 

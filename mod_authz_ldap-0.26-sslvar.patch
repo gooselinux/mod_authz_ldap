@@ -1,0 +1,20 @@
+--- mod_authz_ldap-0.26/module/certmap.c.sslvar
++++ mod_authz_ldap-0.26/module/certmap.c
+@@ -193,7 +193,7 @@ char	*authz_ldap_get_ms_x500_alt_securit
+ 	sec = ap_get_module_config(r->per_dir_config, &authz_ldap_module);
+ 
+ 	/* retrieve the certificate in PEM form				*/
+-	xp = ssl_var_lookup(r->pool, r->server, r->connection, r,
++	xp = do_ssl_var_lookup(r->pool, r->server, r->connection, r,
+ 		"SSL_CLIENT_CERT");
+ 	if (NULL == xp) { 
+ 		AUTHZ_DEBUG2("[%d] not certificate found", (int)getpid());
+@@ -281,7 +281,7 @@ char	*authz_ldap_get_ms_user_principal_n
+ 	sec = ap_get_module_config(r->per_dir_config, &authz_ldap_module);
+ 
+ 	/* retrieve the certificate in PEM form				*/
+-	xp = ssl_var_lookup(r->pool, r->server, r->connection, r,
++	xp = do_ssl_var_lookup(r->pool, r->server, r->connection, r,
+ 		"SSL_CLIENT_CERT");
+ 	if (NULL == xp) { 
+ 		AUTHZ_DEBUG2("[%d] not certificate found", (int)getpid());

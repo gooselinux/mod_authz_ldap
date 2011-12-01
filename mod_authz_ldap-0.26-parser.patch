@@ -1,0 +1,18 @@
+--- mod_authz_ldap-0.26/module/certmap.c.parser
++++ mod_authz_ldap-0.26/module/certmap.c
+@@ -373,11 +373,11 @@ char	*authz_ldap_get_ms_user_principal_n
+ /* utility function to escape parentheses in filter expressions */
+ static void	authz_ldap_escape_parentheses(char *org, char *new) {
+ 	char	*p = org, *q = new;
+-	while ((*p) && ((q - new) < MAX_STRING_LEN))
+-		if ((*p == '(') || (*p == ')')) {
++	while ((*p) && ((q - new) < MAX_STRING_LEN)) {
++		if ((*p == '(') || (*p == ')'))
+ 			*q++ = '\\';
+-			*q++ = *p++;
+-		}
++		*q++ = *p++;
++	}
+ 	*q = '\0';
+ }
+ 

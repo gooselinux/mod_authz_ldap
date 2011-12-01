@@ -1,0 +1,68 @@
+
+Hook into mod_ssl by retrieving the optional function.
+Using ssl_var_lookup directly means mod_authz_ldap won't load
+if mod_ssl isn't loaded.
+
+--- mod_authz_ldap-0.22/module/certmap.c.hook
++++ mod_authz_ldap-0.22/module/certmap.c
+@@ -19,6 +19,24 @@
+ #endif /* AUTHZ_LDAP_HAVE_SSL */
+ #endif /* EAPI */
+ 
++static char *do_ssl_var_lookup(apr_pool_t *p, server_rec *s, conn_rec *c,
++                               request_rec *r, char *v)
++{
++#ifdef EAPI
++    return ssl_var_lookup(p, s, c, r, v);
++#else
++    APR_OPTIONAL_FN_TYPE(ssl_var_lookup) *lookupfn;
++
++    lookupfn = APR_RETRIEVE_OPTIONAL_FN(ssl_var_lookup);
++    
++    if (lookupfn) {
++        return lookupfn(p, s, c, r, v);
++    } else {
++        return NULL;
++    }
++#endif
++}
++
+ /*************************************************************************
+ ** Certificate Retrieval						**
+ *************************************************************************/
+@@ -29,7 +47,7 @@
+ 	authz_ldap_config_rec	*sec;
+ 
+ 	sec = ap_get_module_config(r->per_dir_config, &authz_ldap_module);
+-	issuer_dn = ssl_var_lookup(r->pool, r->server, r->connection, r,
++	issuer_dn = do_ssl_var_lookup(r->pool, r->server, r->connection, r,
+ 		"SSL_CLIENT_I_DN");
+ 	AUTHZ_DEBUG3("[%d] client issuer DN: %s", (int)getpid(),
+ 		(issuer_dn) ? issuer_dn : "(null)");
+@@ -51,7 +69,7 @@
+ 	sec = ap_get_module_config(r->per_dir_config, &authz_ldap_module);
+ 
+ 	/* retrieve the certificate in PEM form				*/
+-	xp = ssl_var_lookup(r->pool, r->server, r->connection, r,
++	xp = do_ssl_var_lookup(r->pool, r->server, r->connection, r,
+ 		"SSL_CLIENT_CERT");
+ 	if (NULL == xp) { 
+ 		AUTHZ_DEBUG2("[%d] not certificate found", (int)getpid());
+@@ -99,7 +117,7 @@
+ 	authz_ldap_config_rec	*sec;
+ 
+ 	sec = ap_get_module_config(r->per_dir_config, &authz_ldap_module);
+-	subject_dn = ssl_var_lookup(r->pool, r->server, r->connection, r,
++	subject_dn = do_ssl_var_lookup(r->pool, r->server, r->connection, r,
+ 		"SSL_CLIENT_S_DN");
+ 	AUTHZ_DEBUG3("[%d] client subject DN: %s", (int)getpid(),
+ 		(subject_dn) ? subject_dn : "(null)");
+@@ -117,7 +135,7 @@
+ 	sec = ap_get_module_config(r->per_dir_config, &authz_ldap_module);
+ 
+ 	/* get serial number from X509 client certificate		*/
+-	cp = ssl_var_lookup(r->pool, r->server, r->connection, r,
++	cp = do_ssl_var_lookup(r->pool, r->server, r->connection, r,
+ 		"SSL_CLIENT_M_SERIAL");
+ 	AUTHZ_DEBUG3("[%d] client serial: %s", (int)getpid(),
+ 		(cp) ? cp : "(null)");

@@ -1,0 +1,18 @@
+--- mod_authz_ldap-0.25/module/mod_authz_ldap.h.build
++++ mod_authz_ldap-0.25/module/mod_authz_ldap.h
+@@ -260,15 +260,6 @@
+ ** declarations from modconf.c						**
+ *************************************************************************/
+ 
+-#ifdef HAVE_LDAP_ENABLE_CACHE
+-/* read the cache timeout from the configuration			*/
+-extern const char	*authz_ldap_set_timeout_slot(cmd_parms *parms,
+-	void *mconfig, const char *arg);
+-/* read the cache size from the configuration				*/
+-extern const char	*authz_ldap_set_cachesize_slot(cmd_parms *parms,
+-	void *mconfig, const char *arg);
+-#endif /* HAVE_LDAP_ENABLE_CACHE */
+-
+ /* initialize a directory configuration record				*/
+ extern void	*authz_ldap_create_dir_config(apr_pool_t *p, char *d);
+ extern void	*authz_ldap_merge_dir_config(apr_pool_t *p, void *pp, void *cp);
